@@ -127,6 +127,14 @@ if app is not None:
     def run_route():
         return start_background_run()
 
+    @app.post("/test-audio")
+    def test_audio_route():
+        try:
+            subprocess.run(["espeak", "this is a test"], check=False)
+            return {"status": "ok", "message": "Played test audio"}
+        except Exception as exc:
+            return {"status": "error", "message": str(exc)}
+
 def parse_args():
     parser = argparse.ArgumentParser(description="BBC News reader")
     parser.add_argument("--play-only", action="store_true", help="Speak the current headlines once")
