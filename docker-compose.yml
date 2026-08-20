@@ -6,6 +6,8 @@ services:
     container_name: bbc-news-app
     ports:
       - "8000:8000"
+    devices:
+      - /dev/snd:/dev/snd
     restart: unless-stopped
     environment:
       PYTHONUNBUFFERED: "1"
