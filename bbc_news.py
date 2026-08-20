@@ -1,30 +1,11 @@
 import argparse
-import json
-import os
-import platform
-import shutil
-import signal
 import subprocess
-import sys
 import urllib.request
 import xml.etree.ElementTree as ET
 from piper import PiperVoice
 import wave
-
-try:
-    import pyttsx3
-except ImportError:
-    pyttsx3 = None
-
-try:
-    from fastapi import FastAPI
-except ImportError:
-    FastAPI = None
-
-try:
-    import uvicorn
-except ImportError:
-    uvicorn = None
+from fastapi import FastAPI
+import uvicorn
 
 BBC_NEWS_RSS = "https://feeds.bbci.co.uk/news/uk/rss.xml"
 
@@ -51,27 +32,9 @@ def speak_text(text):
         return
 
     voice = PiperVoice.load("voices/male.onnx")
-
     with wave.open("/tmp/piper_out.wav", "wb") as wav_file:
         voice.synthesize_wav(text, wav_file)
-
     subprocess.run(["aplay", "/tmp/piper_out.wav"], check=True)
-
-def read_headlines_aloud(headlines):
-    if not headlines:
-        speak_text("Unable to connect to BBC News. It is unavailable right now.")
-        return []
-
-    message = "Here are today's top headlines from BBC News.\n"
-    for i, headline in enumerate(headlines, start=1):
-        message += f"{i}. {headline}\n"
-    speak_text(message)
-    return headlines
-
-
-def run_news_script_once():
-    return read_headlines_aloud(get_top_headlines())
-
 
 def start_background_run():
     try:
@@ -89,7 +52,6 @@ def start_background_run():
 
 app = FastAPI(title="BBC News Service") if FastAPI is not None else None
 
-    
 if app is not None:
     @app.get("/")
     def root():
@@ -110,14 +72,7 @@ if app is not None:
     @app.post("/test-audio")
     def test_audio_route():
         try:
-            if PIPER_BINARY:
-                subprocess.run(
-                    [PIPER_BINARY, "--model", "/usr/share/piper/models/en_US-lessac-medium.onnx", "--output_file", "/tmp/piper_test.wav"],
-                    input="this is a test".encode("utf-8"),
-                    check=False,
-                )
-            else:
-                subprocess.run(["espeak", "this is a test"], check=False)
+            speak_text("This is a test")
             return {"status": "ok", "message": "Played test audio"}
         except Exception as exc:
             return {"status": "error", "message": str(exc)}
