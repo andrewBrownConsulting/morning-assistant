@@ -99,13 +99,18 @@ def run_news_script_once():
 
 
 def start_background_run():
-    subprocess.Popen(
-        [sys.executable, os.path.abspath(__file__), "--play-only"],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        start_new_session=True,
-    )
-    return {"status": "started"}
+    try:
+        news_text = "Here are today's top headlines from BBC News. "
+        headlines = get_top_headlines()
+        if not headlines:
+            news_text += "Unable to connect to BBC News. It is unavailable right now."
+        else:
+            for i, headline in enumerate(headlines, start=1):
+                news_text += f"{i}. {headline}. "
+        subprocess.run(["espeak", news_text], check=False)
+        return {"status": "started"}
+    except Exception as exc:
+        return {"status": "error", "message": str(exc)}
 
 app = FastAPI(title="BBC News Service") if FastAPI is not None else None
 
