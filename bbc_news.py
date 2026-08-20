@@ -9,6 +9,8 @@ import sys
 import urllib.request
 import xml.etree.ElementTree as ET
 
+PIPER_BINARY = shutil.which("piper")
+
 try:
     import pyttsx3
 except ImportError:
@@ -52,6 +54,10 @@ def speak_text(text):
         engine = pyttsx3.init()
         engine.say(text)
         engine.runAndWait()
+        return
+
+    if PIPER_BINARY:
+        subprocess.run([PIPER_BINARY, "--model", "/usr/share/piper/models/en_US-lessac-medium.onnx", "--output_file", "/tmp/piper_out.wav"], input=text.encode("utf-8"), check=False)
         return
 
     system = platform.system()
@@ -135,7 +141,14 @@ if app is not None:
     @app.post("/test-audio")
     def test_audio_route():
         try:
-            subprocess.run(["espeak", "this is a test"], check=False)
+            if PIPER_BINARY:
+                subprocess.run(
+                    [PIPER_BINARY, "--model", "/usr/share/piper/models/en_US-lessac-medium.onnx", "--output_file", "/tmp/piper_test.wav"],
+                    input="this is a test".encode("utf-8"),
+                    check=False,
+                )
+            else:
+                subprocess.run(["espeak", "this is a test"], check=False)
             return {"status": "ok", "message": "Played test audio"}
         except Exception as exc:
             return {"status": "error", "message": str(exc)}
