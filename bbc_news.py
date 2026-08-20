@@ -8,8 +8,8 @@ import subprocess
 import sys
 import urllib.request
 import xml.etree.ElementTree as ET
-
-PIPER_BINARY = shutil.which("piper")
+from piper import PiperVoice
+import wave
 
 try:
     import pyttsx3
@@ -50,43 +50,12 @@ def speak_text(text):
     if not text:
         return
 
-    if pyttsx3 is not None:
-        engine = pyttsx3.init()
-        engine.say(text)
-        engine.runAndWait()
-        return
+    voice = PiperVoice.load("voices/male.onnx")
 
-    if PIPER_BINARY:
-        subprocess.run([PIPER_BINARY, "--model", "/usr/share/piper/models/en_US-lessac-medium.onnx", "--output_file", "/tmp/piper_out.wav"], input=text.encode("utf-8"), check=False)
-        return
+    with wave.open("/tmp/piper_out.wav", "wb") as wav_file:
+        voice.synthesize_wav(text, wav_file)
 
-    system = platform.system()
-
-    if system == "Darwin" and shutil.which("say"):
-        subprocess.run(["say", text], check=False)
-        return
-
-    if system == "Windows" and shutil.which("powershell"):
-        safe_text = text.replace("'", "''")
-        subprocess.run(
-            [
-                "powershell",
-                "-NoProfile",
-                "-Command",
-                f"$voice = New-Object -ComObject SAPI.SpVoice; $voice.Speak('{safe_text}')",
-            ],
-            check=False,
-        )
-        return
-
-    if system == "Linux":
-        for command in ("espeak", "spd-say"):
-            if shutil.which(command):
-                subprocess.run([command, text], check=False)
-                return
-
-    print(f"No supported TTS engine found for {system}.")
-
+    subprocess.run(["aplay", "/tmp/piper_out.wav"], check=True)
 
 def read_headlines_aloud(headlines):
     if not headlines:
@@ -106,21 +75,21 @@ def run_news_script_once():
 
 def start_background_run():
     try:
-        news_text = "Here are today's top headlines from BBC News. "
         headlines = get_top_headlines()
         if not headlines:
-            news_text += "Unable to connect to BBC News. It is unavailable right now."
+            news_text = "Unable to connect to BBC News. It is unavailable right now."
         else:
+            news_text = "Here are today's top headlines from BBC News. "
             for i, headline in enumerate(headlines, start=1):
                 news_text += f"{i}. {headline}. "
-        subprocess.run(["espeak", news_text], check=False)
+        speak_text(news_text)
         return {"status": "started"}
     except Exception as exc:
         return {"status": "error", "message": str(exc)}
 
 app = FastAPI(title="BBC News Service") if FastAPI is not None else None
 
-
+    
 if app is not None:
     @app.get("/")
     def root():
