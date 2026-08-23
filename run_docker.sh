@@ -12,6 +12,8 @@ docker compose build
 
 docker compose up -d
 
+echo "Home assistant app is running."
+echo "Access Home Assistant at http://localhost:8123"
 echo "BBC News app is running."
 echo "Daily cron trigger: 06:00 -> POST http://localhost:8000/run"
 echo "Endpoints:"
@@ -19,3 +21,4 @@ echo "  http://localhost:8000/run"
 echo "  http://localhost:8000/stop"
 echo "  http://localhost:8000/status"
 echo "  http://localhost:8000/headlines"
+echo "  http://localhost:8000/test-audio"

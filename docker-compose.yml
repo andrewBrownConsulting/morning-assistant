@@ -11,3 +11,18 @@ services:
     restart: unless-stopped
     environment:
       PYTHONUNBUFFERED: "1"
+
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: home-assistant
+    volumes:
+      - homeassistant_config:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    ports:
+      - "8123:8123"
+    restart: unless-stopped
+    privileged: true
+
+volumes:
+  homeassistant_config:
