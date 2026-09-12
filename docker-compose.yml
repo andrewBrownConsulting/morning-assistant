@@ -68,6 +68,9 @@ services:
       - spinel+hdlc+uart:///dev/ttyUSB0?uart-baudrate=460800
       - --backbone-interface
       - wlp1s0
+    volumes:
+      - otbr_data:/var/lib/thread
+
 
   music-assistant:
     image: ghcr.io/music-assistant/server:stable
