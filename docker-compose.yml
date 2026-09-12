@@ -49,32 +49,26 @@ services:
     # devices:
     #   - /dev/ttyACM0:/dev/ttyACM0
 
-  otbr:
-    image: openthread/border-router:latest
-    container_name: otbr
-    restart: unless-stopped
-    network_mode: host
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
-    # IPv6 sysctl changes on host networking are not allowed in Docker's host namespace.
-    # Set net.ipv6.conf.all.disable_ipv6 on the host/VM instead of inside the container.
-    environment:
-      OT_RCP_DEVICE: "spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=460800"
-      OTBR_WEB: "true"
-      OTBR_WEB_PORT: "8081"
-      OTBR_BACKBONE_ROUTER: "false"
-      OTBR_MDNS: "0"
-    volumes:
-      - otbr_data:/var/lib/otbr
-    devices:
-      - /dev/ttyUSB0:/dev/ttyACM0
-      - /dev/net/tun:/dev/net/tun
-
-    ports:
-      - "8081:8081"
-    # If your Thread radio is on a different USB path, adjust the line above.
-    # Port 8080 is already commonly used by another process in host networking mode.
+otbr:
+  image: openthread/border-router:latest
+  container_name: otbr
+  restart: unless-stopped
+  network_mode: host
+  cap_add:
+    - NET_ADMIN
+    - NET_RAW
+  environment:
+    OT_RCP_DEVICE: "spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=460800"
+    OTBR_WEB: "true"
+    OTBR_WEB_PORT: "8081"
+    OTBR_BACKBONE_ROUTER: "false"
+    OTBR_MDNS: "0"
+    OTBR_TREL: "0"
+  volumes:
+    - otbr_data:/var/lib/otbr
+  devices:
+    - /dev/ttyUSB0:/dev/ttyACM0
+    - /dev/net/tun:/dev/net/tun
 
 volumes:
   homeassistant_config:
