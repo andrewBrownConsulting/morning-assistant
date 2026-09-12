@@ -34,5 +34,40 @@ services:
       - homeassistant
     restart: unless-stopped
 
+  matter-server:
+    image: ghcr.io/home-assistant-libs/python-matter-server:stable
+    container_name: matter-server
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - matter_server_data:/data
+    security_opt:
+      - seccomp:unconfined
+    # Uncomment and adjust this line if you are using a Thread/Matter radio via USB serial.
+    # devices:
+    #   - /dev/ttyACM0:/dev/ttyACM0
+
+  otbr:
+    image: ghcr.io/home-assistant/openthread-border-router:stable
+    container_name: otbr
+    restart: unless-stopped
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    sysctls:
+      net.ipv6.conf.all.disable_ipv6: "0"
+    environment:
+      OTBR_WEB: "true"
+      OTBR_BACKBONE_ROUTER: "false"
+      OTBR_MDNS: "0"
+    volumes:
+      - otbr_data:/var/lib/otbr
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+    # If your Thread radio is on a different USB path, adjust the line above.
+
 volumes:
   homeassistant_config:
+  matter_server_data:
+  otbr_data:
