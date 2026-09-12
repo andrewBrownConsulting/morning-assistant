@@ -67,7 +67,7 @@ services:
     volumes:
       - otbr_data:/var/lib/otbr
     devices:
-      - /dev/ttyUSB0:/dev/ttyUSB0
+      - /dev/ttyUSB0:/dev/ttyACM0
     ports:
       - "8081:8081"
     # If your Thread radio is on a different USB path, adjust the line above.
