@@ -64,6 +64,7 @@ services:
       OTBR_WEB_PORT: "8081"
       OTBR_BACKBONE_ROUTER: "false"
       OTBR_MDNS: "0"
+      OTBR_RADIO_URL: "spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=460800"
     volumes:
       - otbr_data:/var/lib/otbr
     devices:
