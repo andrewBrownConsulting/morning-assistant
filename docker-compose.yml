@@ -58,17 +58,16 @@ services:
     cap_add:
       - NET_ADMIN
       - NET_RAW
-    command:
-      - --radio-url
-      - spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=460800
-      - -B
-      - wlp1s0
+    environment:
+      - OT_RCP_DEVICE=spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=460800
+      - OT_INFRA_IF=wlp1s0
+      - OT_THREAD_IF=wlp1s0
+      - OT_LOG_LEVEL=7
     volumes:
       - otbr_data:/var/lib/otbr
     devices:
       - /dev/ttyUSB0:/dev/ttyACM0
       - /dev/net/tun:/dev/net/tun
-
 volumes:
   homeassistant_config:
   matter_server_data:
