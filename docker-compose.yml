@@ -60,11 +60,11 @@ services:
     # IPv6 sysctl changes on host networking are not allowed in Docker's host namespace.
     # Set net.ipv6.conf.all.disable_ipv6 on the host/VM instead of inside the container.
     environment:
+      OT_RCP_DEVICE: "spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=460800"
       OTBR_WEB: "true"
       OTBR_WEB_PORT: "8081"
       OTBR_BACKBONE_ROUTER: "false"
       OTBR_MDNS: "0"
-      OTBR_RADIO_URL: "spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=460800"
     volumes:
       - otbr_data:/var/lib/otbr
     devices:
