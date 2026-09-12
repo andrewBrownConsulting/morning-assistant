@@ -54,6 +54,7 @@ services:
     container_name: otbr
     restart: unless-stopped
     network_mode: host
+    privilaged: true
     cap_add:
       - NET_ADMIN
       - NET_RAW
