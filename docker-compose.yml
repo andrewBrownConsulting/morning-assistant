@@ -76,10 +76,10 @@ services:
     network_mode: host
     volumes:
       - music_assistant_data:/data
+      - /home/andrew/music:/media/music:ro
     # Uncomment for local ALSA audio output on the host.
     # devices:
     #   - /dev/snd:/dev/snd
-
   sendspin-client:
     image: ghcr.io/trudenboy/sendspin-bt-bridge:latest
     container_name: sendspin-client
