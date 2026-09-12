@@ -68,7 +68,20 @@ services:
       - spinel+hdlc+uart:///dev/ttyUSB0?uart-baudrate=460800
       - --backbone-interface
       - wlp1s0
+
+  music-assistant:
+    image: ghcr.io/music-assistant/server:stable
+    container_name: music-assistant
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - music_assistant_data:/data
+    # Uncomment for local ALSA audio output on the host.
+    # devices:
+    #   - /dev/snd:/dev/snd
+
 volumes:
   homeassistant_config:
   matter_server_data:
   otbr_data:
+  music_assistant_data:
