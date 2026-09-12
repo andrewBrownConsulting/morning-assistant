@@ -80,6 +80,38 @@ services:
     # devices:
     #   - /dev/snd:/dev/snd
 
+  sendspin-client:
+    image: ghcr.io/trudenboy/sendspin-bt-bridge:latest
+    container_name: sendspin-client
+    restart: unless-stopped
+    network_mode: host
+
+    volumes:
+      - /var/run/dbus:/var/run/dbus
+      - /run/user/1000/pulse:/run/user/1000/pulse
+      - /run/user/1000/pipewire-0:/run/user/1000/pipewire-0
+      - /etc/docker/Sendspin:/config
+
+    environment:
+      SENDSPIN_SERVER: auto
+      WEB_PORT: 8080
+      CONFIG_DIR: /config
+      AUDIO_UID: 1000
+      AUDIO_GID: 1000
+      PULSE_SERVER: unix:/run/user/1000/pulse/native
+      XDG_RUNTIME_DIR: /run/user/1000
+
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+
+    security_opt:
+      - apparmor:unconfined
+      - seccomp:unconfined
+
 volumes:
   homeassistant_config:
   matter_server_data:
