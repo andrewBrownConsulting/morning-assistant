@@ -50,24 +50,23 @@ services:
     #   - /dev/ttyACM0:/dev/ttyACM0
 
   otbr:
-    image: openthread/border-router:latest
+    image: openthread/otbr:latest
     container_name: otbr
     restart: unless-stopped
     network_mode: host
     privileged: true
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
-    environment:
-      - OT_RCP_DEVICE=spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=460800
-      - OT_INFRA_IF=wlp1s0
-      - OT_THREAD_IF=wpan0
-      - OT_LOG_LEVEL=7
-    volumes:
-      - otbr_data:/var/lib/otbr
     devices:
-      - /dev/ttyUSB0:/dev/ttyACM0
-      - /dev/net/tun:/dev/net/tun
+      - /dev/ttyUSB0:/dev/ttyUSB0
+
+    environment:
+      OT_INFRA_IF: wlp1s0
+      OT_THREAD_IF: wpan0
+
+    command:
+      - --radio-url
+      - spinel+hdlc+uart:///dev/ttyUSB0?uart-baudrate=460800
+      - --backbone-interface
+      - wlp1s0
 volumes:
   homeassistant_config:
   matter_server_data:
