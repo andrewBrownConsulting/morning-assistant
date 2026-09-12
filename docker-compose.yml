@@ -55,8 +55,8 @@ services:
     cap_add:
       - NET_ADMIN
       - NET_RAW
-    sysctls:
-      net.ipv6.conf.all.disable_ipv6: "0"
+    # IPv6 sysctl changes on host networking are not allowed in Docker's host namespace.
+    # Set net.ipv6.conf.all.disable_ipv6 on the host/VM instead of inside the container.
     environment:
       OTBR_WEB: "true"
       OTBR_BACKBONE_ROUTER: "false"
