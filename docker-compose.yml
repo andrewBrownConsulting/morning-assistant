@@ -59,11 +59,12 @@ services:
       - NET_RAW
     environment:
       OT_RCP_DEVICE: "spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=460800"
-      OTBR_WEB: "true"
+      OTBR_WEB: "false"
       OTBR_WEB_PORT: "8081"
       OTBR_BACKBONE_ROUTER: "false"
       OTBR_MDNS: "0"
       OTBR_TREL: "0"
+      OTBR_INFRA_IF_NAME: "eth0"
     volumes:
       - otbr_data:/var/lib/otbr
     devices:
