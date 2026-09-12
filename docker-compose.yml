@@ -66,6 +66,8 @@ services:
       - otbr_data:/var/lib/otbr
     devices:
       - /dev/ttyUSB0:/dev/ttyUSB0
+    ports:
+      - "8081:8081"
     # If your Thread radio is on a different USB path, adjust the line above.
     # Port 8080 is already commonly used by another process in host networking mode.
 
