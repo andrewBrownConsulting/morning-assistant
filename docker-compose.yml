@@ -51,25 +51,25 @@ services:
     #   - /dev/ttyACM0:/dev/ttyACM0
 
   otbr:
-    image: openthread/otbr:latest
+    # openthread/otbr is a TESTING-ONLY image (no mDNS/avahi advertisement); use the production image instead
+    image: openthread/border-router:latest
     container_name: otbr
     restart: unless-stopped
     network_mode: host
     privileged: true
     devices:
       - /dev/ttyUSB0:/dev/ttyUSB0
+      - /dev/net/tun:/dev/net/tun
 
     environment:
+      OT_RCP_DEVICE: spinel+hdlc+uart:///dev/ttyUSB0?uart-baudrate=460800
       OT_INFRA_IF: wlp1s0
       OT_THREAD_IF: wpan0
+      # 8080 clashes with sendspin-client's WEB_PORT since both use host networking
+      OT_WEB_LISTEN_PORT: "8180"
 
-    command:
-      - --radio-url
-      - spinel+hdlc+uart:///dev/ttyUSB0?uart-baudrate=460800
-      - --backbone-interface
-      - wlp1s0
     volumes:
-      - otbr_data:/var/lib/thread
+      - otbr_data:/data
 
 
   music-assistant:
